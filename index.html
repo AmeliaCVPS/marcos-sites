@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marcos | Sites, jogos e vídeos</title>
+<meta name="description" content="Sites para negócios, vídeos para redes sociais e jogos para navegador. Prévia grátis antes de fechar.">
+<meta property="og:title" content="Marcos | Sites, jogos e vídeos">
+<meta property="og:description" content="Sites que trazem cliente pelo WhatsApp, cortes e animações para redes e um jogo com milhares de views. Prévia grátis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0c14;--bg2:#14121f;--card:#1a1728;--line:#2b2740;--txt:#f1eff8;--mut:#a7a2bd;--roxo:#a78bfa;--roxo2:#7c5cff;--ama:#ffd23f}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:10;background:rgba(13,12,20,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.25rem}
+.logo span{color:var(--roxo)}
+.nav nav a{margin-left:22px;color:var(--mut);font-size:.92rem}
+.nav nav a:hover{color:var(--txt)}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:12px;font-weight:600;transition:.2s}
+.btn-p{background:var(--roxo2);color:#fff}
+.btn-p:hover{background:var(--roxo);transform:translateY(-2px)}
+.btn-g{border:1px solid var(--line)}
+.btn-g:hover{border-color:var(--roxo)}
+.hero{padding:96px 0 80px;background:radial-gradient(700px 380px at 85% 0%,rgba(124,92,255,.28),transparent 70%),radial-gradient(500px 300px at 0% 100%,rgba(255,210,63,.08),transparent 70%)}
+.tag{display:inline-block;border:1px solid rgba(167,139,250,.4);color:var(--roxo);padding:6px 12px;border-radius:99px;font-size:.85rem;font-weight:600;margin-bottom:20px}
+h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(2.4rem,6vw,4.2rem);line-height:1.05;max-width:820px}
+h1 em{font-style:normal;color:var(--roxo)}
+.lead{color:var(--mut);font-size:1.12rem;max-width:620px;margin:20px 0 30px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.nums{display:flex;flex-wrap:wrap;gap:34px;margin-top:44px}
+.nums b{display:block;font-family:'Space Grotesk',sans-serif;font-size:2rem;color:var(--ama);line-height:1}
+.nums span{color:var(--mut);font-size:.88rem}
+section{padding:84px 0}
+h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.9rem,4vw,2.7rem);margin-bottom:8px}
+.sub{color:var(--mut);max-width:640px;margin-bottom:36px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;transition:.2s}
+.card:hover{border-color:rgba(167,139,250,.55);transform:translateY(-3px)}
+.ico{width:46px;height:46px;border-radius:12px;background:rgba(124,92,255,.18);display:grid;place-items:center;font-size:1.35rem;margin-bottom:14px}
+.card h3{font-size:1.15rem;margin-bottom:6px}
+.card p{color:var(--mut);font-size:.95rem}
+.card ul{list-style:none;margin-top:12px}
+.card li{color:var(--mut);font-size:.92rem;padding-left:20px;position:relative;margin:4px 0}
+.card li:before{content:"✓";position:absolute;left:0;color:var(--roxo)}
+.site{padding:0;overflow:hidden}
+.tela{height:230px;overflow:hidden;position:relative;background:#fff;border-bottom:1px solid var(--line)}
+.tela iframe{width:1280px;height:920px;border:0;transform:scale(.25);transform-origin:0 0;pointer-events:none}
+.site .info{padding:18px 20px}
+.site .info a{color:var(--roxo);font-weight:600;font-size:.9rem}
+.jogo{background:linear-gradient(135deg,#1c1535,#0d0c14)}
+.split{display:grid;grid-template-columns:1.1fr 1fr;gap:46px;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:24px 0}
+.stat{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:16px}
+.stat b{display:block;font-family:'Space Grotesk',sans-serif;font-size:1.6rem;color:var(--ama)}
+.stat span{color:var(--mut);font-size:.85rem}
+.jogo-tela{border-radius:18px;overflow:hidden;border:1px solid var(--line);aspect-ratio:16/10;background:#000}
+.jogo-tela iframe{width:100%;height:100%;border:0}
+.passos{counter-reset:p;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.passo{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;counter-increment:p}
+.passo:before{content:counter(p);display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--roxo2);font-weight:700;margin-bottom:12px}
+.passo b{display:block;margin-bottom:4px}
+.passo span{color:var(--mut);font-size:.93rem}
+.final{text-align:center;background:radial-gradient(600px 300px at 50% 0%,rgba(124,92,255,.25),transparent 70%)}
+.final p{color:var(--mut);max-width:560px;margin:10px auto 28px}
+footer{padding:28px 0;border-top:1px solid var(--line);color:var(--mut);font-size:.85rem;text-align:center}
+@media(max-width:860px){.split{grid-template-columns:1fr}.nav nav{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#">Marcos<span>.</span></a>
+    <nav><a href="#servicos">Serviços</a><a href="#sites">Sites</a><a href="#jogo">Jogo</a><a href="#videos">Vídeos</a><a href="#contato">Contato</a></nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="tag">Sites · Vídeos · Jogos</span>
+    <h1>Seu negócio <em>encontrado, entendido e escolhido</em> na internet</h1>
+    <p class="lead">Faço sites que transformam quem te acha no Google em conversa no WhatsApp, e vídeos que mantêm sua marca presente nas redes. Você vê uma prévia grátis antes de decidir.</p>
+    <div class="cta">
+      <a class="btn btn-p" href="https://ig.me/m/marcos.sites_negocios" target="_blank" rel="noopener">💬 Pedir minha prévia grátis</a>
+      <a class="btn btn-g" href="#sites">Ver trabalhos</a>
+    </div>
+    <div class="nums">
+      <div><b>18 mil</b><span>views no vídeo do jogo</span></div>
+      <div><b>960</b><span>jogadores em 30 dias</span></div>
+      <div><b>24 h</b><span>para a prévia do seu site</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="servicos">
+  <div class="wrap">
+    <h2>O que eu faço</h2>
+    <p class="sub">Cada serviço resolve um problema que custa dinheiro ou tempo para o seu negócio.</p>
+    <div class="grid">
+      <div class="card"><div class="ico">🌐</div><h3>Sites para negócios</h3><p>Para quem já tem clientes no Google e no Instagram, mas perde contatos por não ter onde mostrar o que faz.</p>
+        <ul><li>Serviços, preços e avaliações em uma página</li><li>Botão de WhatsApp com mensagem pronta</li><li>Rápido no celular e ligado à ficha do Google</li></ul></div>
+      <div class="card"><div class="ico">🎬</div><h3>Vídeos e cortes para redes</h3><p>Para quem grava (podcast, aulas, entrevistas) e não tem tempo de editar.</p>
+        <ul><li>Cortes verticais com legenda animada</li><li>Animações que explicam a ideia</li><li>Capas no padrão da sua marca</li></ul></div>
+      <div class="card"><div class="ico">🎮</div><h3>Jogos e experiências web</h3><p>Jogos e páginas interativas que rodam no navegador, sem instalar nada.</p>
+        <ul><li>3D no celular e no computador</li><li>Ranking, fases e personalização</li><li>Ideal para campanhas e eventos</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="sites" style="padding-top:20px">
+  <div class="wrap">
+    <h2>Sites</h2>
+    <p class="sub">Alguns sites que fiz. Toque para ver ao vivo.</p>
+    <div class="grid">
+      <a class="card site" href="https://angels-fisioterapia.vercel.app" target="_blank" rel="noopener"><div class="tela"><iframe loading="lazy" title="Angel's Fisioterapia" src="https://angels-fisioterapia.vercel.app" tabindex="-1"></iframe></div><div class="info"><h3>Fisioterapia e estética</h3><a>Ver site ↗</a></div></a>
+      <a class="card site" href="https://studiomartins.vercel.app" target="_blank" rel="noopener"><div class="tela"><iframe loading="lazy" title="Studio Martins" src="https://studiomartins.vercel.app" tabindex="-1"></iframe></div><div class="info"><h3>Studio de pilates</h3><a>Ver site ↗</a></div></a>
+      <a class="card site" href="https://amordepata.vercel.app" target="_blank" rel="noopener"><div class="tela"><iframe loading="lazy" title="Amor de Pata" src="https://amordepata.vercel.app" tabindex="-1"></iframe></div><div class="info"><h3>Pet shop</h3><a>Ver site ↗</a></div></a>
+    </div>
+  </div>
+</section>
+
+<section class="jogo" id="jogo">
+  <div class="wrap split">
+    <div>
+      <span class="tag">Projeto próprio</span>
+      <h2>Lila no Limite</h2>
+      <p class="sub" style="margin-bottom:0">Um jogo de corrida 3D que roda no navegador, com pistas reais como Interlagos, Nürburgring e Las Vegas. Tudo feito por mim, do código aos vídeos que divulgam o jogo.</p>
+      <div class="stats">
+        <div class="stat"><b>18 mil</b><span>views no vídeo de lançamento</span></div>
+        <div class="stat"><b>960</b><span>jogadores nos últimos 30 dias</span></div>
+        <div class="stat"><b>3</b><span>pistas reais em 3D</span></div>
+        <div class="stat"><b>79%</b><span>jogam pelo celular</span></div>
+      </div>
+      <a class="btn btn-p" href="https://lila-no-limite-interlagos.vercel.app" target="_blank" rel="noopener">🎮 Jogar grátis</a>
+    </div>
+    <div class="jogo-tela"><iframe loading="lazy" title="Lila no Limite" src="https://lila-no-limite-interlagos.vercel.app"></iframe></div>
+  </div>
+</section>
+
+<section id="videos">
+  <div class="wrap">
+    <h2>Vídeos</h2>
+    <p class="sub">Roteiro, animação 3D, narração, legenda e capa. A série da Lila é o meu laboratório: tudo o que funciona lá eu aplico nos vídeos dos clientes.</p>
+    <div class="grid">
+      <a class="card" href="https://www.youtube.com/@lilanolimite" target="_blank" rel="noopener"><div class="ico">▶</div><h3>YouTube @lilanolimite</h3><p>Shorts de física, F1 e games, com animação 3D.</p></a>
+      <a class="card" href="https://www.tiktok.com/@lilanolimite" target="_blank" rel="noopener"><div class="ico">♪</div><h3>TikTok @lilanolimite</h3><p>14 mil views na última semana, 86% vindos do Para Você.</p></a>
+      <a class="card" href="https://www.instagram.com/lilanolimite/" target="_blank" rel="noopener"><div class="ico">◎</div><h3>Instagram @lilanolimite</h3><p>Reels de até 11,9 mil views.</p></a>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:20px">
+  <div class="wrap">
+    <h2>Como funciona</h2>
+    <p class="sub">Sem risco: você vê antes de pagar.</p>
+    <div class="passos">
+      <div class="passo"><b>Você me chama</b><span>Conta o que o seu negócio faz e o que precisa.</span></div>
+      <div class="passo"><b>Prévia grátis</b><span>Em até 24 h você recebe uma prévia com a sua cara.</span></div>
+      <div class="passo"><b>Ajustes</b><span>Mudamos textos, fotos e cores até ficar do seu jeito.</span></div>
+      <div class="passo"><b>No ar</b><span>Site publicado e ligado ao Google e ao Instagram.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="final" id="contato">
+  <div class="wrap">
+    <h2>Vamos ver como fica o seu?</h2>
+    <p>Me chama no direct com o nome do seu negócio. Eu monto a prévia e te mando, sem compromisso.</p>
+    <a class="btn btn-p" href="https://ig.me/m/marcos.sites_negocios" target="_blank" rel="noopener">💬 Chamar no Instagram</a>
+  </div>
+</section>
+
+<footer>© 2026 Marcos · Sites, jogos e vídeos · São Paulo</footer>
+</body>
+</html>
