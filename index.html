@@ -70,9 +70,26 @@ h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.9rem,4vw,2.7rem);mar
 .final p{color:var(--mut);max-width:560px;margin:10px auto 28px}
 footer{padding:28px 0;border-top:1px solid var(--line);color:var(--mut);font-size:.85rem;text-align:center}
 @media(max-width:860px){.split{grid-template-columns:1fr}.nav nav{display:none}}
+:root{--galaxy-a:#a78bfa;--galaxy-b:#ffd23f}
+.hero{position:relative;overflow:hidden}
+.hero .wrap{position:relative;z-index:1}
+.galaxy{position:absolute;inset:0;opacity:0;transition:opacity 1.2s ease;z-index:0}
+.galaxy.is-ready{opacity:1}
+.final{position:relative;overflow:hidden}
+.final .wrap{position:relative;z-index:1}
+#dot-field{position:fixed;inset:0;z-index:0;opacity:.9;pointer-events:none}
+section,footer{position:relative;z-index:1}
+header{z-index:10}
+.jogo{background:linear-gradient(135deg,rgba(28,21,53,.75),rgba(13,12,20,.35))}
+.card,.passo{background:rgba(26,23,40,.88)}
+.rail{position:fixed;top:0;bottom:0;width:max(0px,calc((100vw - 1180px)/2));opacity:.18;pointer-events:none;z-index:0;overflow:hidden}
+#rail-left{left:0}#rail-right{right:0}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
 </style>
 </head>
-<body>
+<body><div id="dot-field" aria-hidden="true"></div><div class="rail" id="rail-left" aria-hidden="true"></div><div class="rail" id="rail-right" aria-hidden="true"></div>
 <header>
   <div class="wrap nav">
     <a class="logo" href="#">Marcos<span>.</span></a>
@@ -80,7 +97,7 @@ footer{padding:28px 0;border-top:1px solid var(--line);color:var(--mut);font-siz
   </div>
 </header>
 
-<section class="hero">
+<section class="hero"><div class="galaxy" data-galaxy data-galaxy-opacidade="0.9" aria-hidden="true"></div>
   <div class="wrap">
     <span class="tag">Sites · Vídeos · Jogos</span>
     <h1>Seu negócio <em>encontrado, entendido e escolhido</em> na internet</h1>
@@ -176,5 +193,25 @@ footer{padding:28px 0;border-top:1px solid var(--line);color:var(--mut);font-siz
 </section>
 
 <footer>© 2026 Marcos · Sites, jogos e vídeos · São Paulo</footer>
+<script type="module" src="js/galaxy.js"></script>
+<script type="module">
+const reduzido = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fino = matchMedia('(hover: hover) and (pointer: fine)').matches;
+// aparecer ao rolar (do portfólio antigo)
+const obs = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } }), { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('section h2, .sub, .card, .passo, .stat, .jogo-tela').forEach((el) => { el.classList.add('reveal'); obs.observe(el); });
+// campo de pontos no contato (do portfólio antigo, nas cores da marca)
+import('./js/dot-field.js').then(({ initDotField }) => {
+  const f = initDotField(document.getElementById('dot-field'), { gradientFrom: 'rgba(167,139,250,0.35)', gradientTo: 'rgba(255,210,63,0.18)', glowColor: 'rgba(167,139,250,0.12)' });
+  if (!reduzido && fino) f.start?.();
+}).catch(() => {});
+// trilhos de letras com glitch nas laterais (só em telas largas)
+import('./js/letter-glitch.js').then(({ initLetterGlitch }) => {
+  const els = [document.getElementById('rail-left'), document.getElementById('rail-right')];
+  if (els[0].getBoundingClientRect().width < 8) return;
+  const rails = els.map((el) => initLetterGlitch(el, { glitchColors: ['#7c5cff', '#a78bfa', '#ffd23f'], glitchSpeed: 50, smooth: true })).filter(Boolean);
+  rails.forEach((r) => (reduzido ? r.showStatic?.() : r.start?.()));
+}).catch(() => {});
+</script>
 </body>
 </html>
