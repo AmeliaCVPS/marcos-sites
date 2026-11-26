@@ -196,7 +196,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .pasta__folhas{position:relative;flex:1;min-height:0}
 .pasta .proj{position:absolute;inset:0;margin:0;padding:26px 44px;border:0;border-radius:26px;background:var(--creme2);
   box-shadow:0 -1px 0 rgba(0,0,0,.04),0 30px 60px -28px rgba(40,20,90,.4);transform-origin:50% 0;will-change:transform;overflow:hidden;gap:40px}
-.pasta .proj::after{content:"";position:absolute;inset:0;border-radius:inherit;background:#1b1530;opacity:var(--sombra,0);pointer-events:none;transition:opacity .1s linear}
+.pasta .proj{contain:layout paint;backface-visibility:hidden}
+.folha-sombra{position:absolute;inset:0;z-index:5;border-radius:inherit;background:#1b1530;opacity:0;pointer-events:none;will-change:opacity}
+.pasta .proj:not(.frente) :is(.ip,.aviso,.palco){animation-play-state:paused}
 .pasta .proj:nth-of-type(even) .palco{order:0}
 .pasta .palco{min-height:0;height:100%;border-radius:22px}
 .pasta__dica{position:absolute;left:50%;bottom:-30px;transform:translateX(-50%);font-size:.8rem;color:var(--mut2);transition:opacity .3s}
@@ -516,6 +518,7 @@ function animarCelular(el){
     requestAnimationFrame(quadro);
     const dt=ultimo?Math.min(agora-ultimo,50):0;ultimo=agora;
     if(!visivel||pausado||!modo)return;
+    const folha=el.closest('.proj');if(folha&&folha.closest('.pasta')&&!folha.classList.contains('frente'))return; // só anima o celular da folha da frente
     acumulado+=dt;const t=acumulado%CICLO/CICLO,ciclo=Math.floor(acumulado/CICLO);
     if(ciclo!==ultimoCiclo){ultimoCiclo=ciclo;toque.classList.remove('on');void toque.offsetWidth;setTimeout(()=>toque.classList.add('on'),500)}
     // posição: 0–15% parado no topo, desce até 60%, parado até 78%, sobe até 93%
@@ -552,24 +555,34 @@ partes.forEach(el=>io.observe(el));
   // celular do tamanho que cabe na folha
   const medir=()=>folhas.forEach(f=>{const palco=f.querySelector('.palco'),ip=f.querySelector('.ip');if(!palco||!ip)return;
     const H=palco.clientHeight-24;const wn=clamp((H-21.6)*390/844+21.6,170,300);ip.style.setProperty('--wn',wn.toFixed(1))});
-  let ativa=-1,pedido=0;
+  // otimizado: medidas só no resize, nada de getComputedStyle por quadro, sombra numa camada própria
+  // (opacity, sem variável herdada que recalcula a folha inteira) e cada folha só é reescrita quando muda.
+  const sombras=folhas.map((f,i)=>{const s=document.createElement('span');s.className='folha-sombra';f.append(s);f.style.zIndex=i+1;return s});
+  const ult=folhas.map(()=>({t:'',o:-1,v:null}));
+  let ativa=-1,pedido=0,inicio=0,total=1,ultimoP=-1;
+  const medidas=()=>{const topo=parseFloat(getComputedStyle(fixa).top)||0;total=Math.max(1,pasta.offsetHeight-fixa.offsetHeight);inicio=pasta.getBoundingClientRect().top+scrollY-topo};
   const atualizar=()=>{pedido=0;
-    const total=Math.max(1,pasta.offsetHeight-fixa.offsetHeight),topo=parseFloat(getComputedStyle(fixa).top);
-    const p=clamp((topo-pasta.getBoundingClientRect().top)/total,0,1)*(n-1);
-    folhas.forEach((f,i)=>{
-      const entra=i===0?1:suave(clamp(p-(i-1),0,1));          // 0 = fora (embaixo), 1 = no lugar
-      const atras=clamp(p-i,0,2);                              // quantas folhas já estão por cima
-      f.style.transform=`translateY(${(1-entra)*108}%) translateY(${-atras*16}px) scale(${1-atras*.05})`;
-      f.style.setProperty('--sombra',(atras*.16).toFixed(3));f.style.zIndex=i+1;
-      f.style.visibility=entra<=0.001?'hidden':'visible';
-      f.inert=Math.round(p)!==i;
-    });
-    const a=Math.round(p);if(a!==ativa){ativa=a;abas.forEach((b,i)=>{b.classList.toggle('ativa',i===a);b.setAttribute('aria-selected',i===a)})}
-    if(dica)dica.style.opacity=p>n-1.3?0:1;
+    const p=clamp((scrollY-inicio)/total,0,1)*(n-1);
+    if(Math.abs(p-ultimoP)<.0005)return;ultimoP=p;
+    for(let i=0;i<n;i++){
+      const entra=i===0?1:suave(clamp(p-(i-1),0,1)),atras=clamp(p-i,0,1.5),u=ult[i],vis=entra>.001;
+      if(vis!==u.v){u.v=vis;folhas[i].style.visibility=vis?'visible':'hidden'}
+      if(!vis)continue;
+      const t=`translate3d(0,calc(${((1-entra)*108).toFixed(2)}% - ${(atras*16).toFixed(1)}px),0) scale(${(1-atras*.05).toFixed(4)})`;
+      if(t!==u.t){u.t=t;folhas[i].style.transform=t}
+      const o=+(atras*.16).toFixed(3);if(o!==u.o){u.o=o;sombras[i].style.opacity=o}
+    }
+    const a=Math.round(p);
+    if(a!==ativa){ativa=a;abas.forEach((b,i)=>{b.classList.toggle('ativa',i===a);b.setAttribute('aria-selected',i===a)});
+      folhas.forEach((f,i)=>{f.inert=i!==a;f.classList.toggle('frente',i===a)});
+      if(dica)dica.style.opacity=a>=n-1?0:1}
   };
   const pedir=()=>{if(!pedido)pedido=requestAnimationFrame(atualizar)};
-  addEventListener('scroll',pedir,{passive:true});addEventListener('resize',()=>{medir();pedir()});
-  medir();atualizar();
+  addEventListener('scroll',pedir,{passive:true});
+  const remedir=()=>{medir();medidas();ultimoP=-1;pedir()};
+  let rt=0;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(remedir,120)});
+  new ResizeObserver(()=>{clearTimeout(rt);rt=setTimeout(remedir,120)}).observe(document.body);
+  medir();medidas();atualizar();
 })();
 
 /* ---------- AnimatedContent (React Bits) em JavaScript puro + GSAP/ScrollTrigger ----------
