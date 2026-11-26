@@ -100,7 +100,7 @@ float Star(vec2 uv, float flare) {
   uv *= MAT45;
   rays = smoothstep(0.0, 1.0, 1.0 - abs(uv.x * uv.y * 1000.0));
   m += rays * 0.3 * flare * uGlowIntensity;
-  m *= smoothstep(1.0, 0.2, d);
+  m *= 1.0 - smoothstep(0.2, 1.0, d);   // limites em ordem crescente (invertidos dão lixo em algumas GPUs)
   return m;
 }
 
@@ -162,14 +162,15 @@ void main() {
   for (float i = 0.0; i < 1.0; i += 1.0 / NUM_LAYER) {
     float depth = fract(i + uStarSpeed * uSpeed);
     float scale = mix(20.0 * uDensity, 0.5 * uDensity, depth);
-    float fade = depth * smoothstep(1.0, 0.9, depth);
+    float fade = depth * (1.0 - smoothstep(0.9, 1.0, depth));
     col += StarLayer(uv * scale + i * 453.32) * fade;
   }
 
   // Fundo transparente. A cor sai "pura" (sem escurecer) e a intensidade vira opacidade,
   // para as estrelas aparecerem como luz dourada sobre o fundo claro do site.
   float energy = max(max(col.r, col.g), col.b);
-  float alpha = smoothstep(0.0, 0.3, length(col)) * uOpacidade;
+  // só o miolo das estrelas aparece: o brilho fraco não vira névoa colorida no fundo
+  float alpha = smoothstep(0.06, 0.5, energy) * uOpacidade;
   vec3 rgb = col / max(energy, 0.0001);
   gl_FragColor = vec4(min(rgb, vec3(1.0)), clamp(alpha, 0.0, 1.0));
 }

@@ -101,6 +101,9 @@ header{z-index:10}
 .zap-flutuante.oculto{opacity:0;transform:translateY(12px);pointer-events:none}
 /* celular: botões do topo na largura toda (o texto do WhatsApp não cabia ao lado do outro) */
 @media(max-width:520px){.hero .cta .btn{width:100%;justify-content:center}}
+/* PC: conteúdo mais largo (sem o glitch, sobrava muito espaço nas laterais) */
+@media(min-width:1300px){.wrap{max-width:1280px;padding:0 40px}h1{max-width:960px}}
+@media(min-width:1700px){.wrap{max-width:1440px}}
 </style>
 </head>
 <body><div id="dot-field" aria-hidden="true"></div>
