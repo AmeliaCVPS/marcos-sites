@@ -25,7 +25,8 @@
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--ink);color:var(--txt);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
-img{max-width:100%;display:block}
+img{max-width:100%;height:auto;display:block}
+.bloco img{width:100%;aspect-ratio:16/10;object-fit:cover}
 .wrap{max-width:1180px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
 h1,h2,h3{margin:0;letter-spacing:-.025em;text-wrap:balance;font-weight:500}
 em{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.01em}
@@ -205,8 +206,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 @media(max-width:860px){
   .pasta{height:calc(var(--n,3) * 90vh + 20vh)}
   .pasta__fixa{top:calc(70px + env(safe-area-inset-top,0px));height:calc(100svh - 86px)}
-  .pasta .proj{grid-template-columns:1fr;grid-template-rows:1fr auto;padding:14px 16px 18px;gap:10px;align-content:stretch}
-  .pasta .palco{height:auto;min-height:0}
+  /* minmax(0,1fr): a área do celular não estica pelo próprio celular (era o que cortava o topo) */
+  .pasta .proj{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto;padding:16px 16px 18px;gap:10px;align-content:stretch}
+  .pasta .palco{height:100%;min-height:0;overflow:visible}
   .pasta .proj p,.pasta .proj .ganho,.pasta .aviso{display:none}
   .pasta .proj h3{font-size:1.6rem;margin:2px 0 10px}
   .pasta .proj .btn{padding:10px 18px}
@@ -554,7 +556,8 @@ partes.forEach(el=>io.observe(el));
   const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),suave=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   // celular do tamanho que cabe na folha
   const medir=()=>folhas.forEach(f=>{const palco=f.querySelector('.palco'),ip=f.querySelector('.ip');if(!palco||!ip)return;
-    const H=palco.clientHeight-24;const wn=clamp((H-21.6)*390/844+21.6,170,300);ip.style.setProperty('--wn',wn.toFixed(1))});
+    const H=palco.clientHeight-30,W=palco.clientWidth-16;   // folga para a sombra e a flutuação
+    const wn=clamp(Math.min((H-21.6)*390/844+21.6,W),150,300);ip.style.setProperty('--wn',wn.toFixed(1))});
   // otimizado: medidas só no resize, nada de getComputedStyle por quadro, sombra numa camada própria
   // (opacity, sem variável herdada que recalcula a folha inteira) e cada folha só é reescrita quando muda.
   const sombras=folhas.map((f,i)=>{const s=document.createElement('span');s.className='folha-sombra';f.append(s);f.style.zIndex=i+1;return s});
