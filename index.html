@@ -296,6 +296,16 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .palavra{display:inline-block}
 /* AnimatedContent: esconde antes da 1ª pintura o que o GSAP vai animar (o GSAP mostra de volta) */
 .ac :is(.hero h1,.hero p,.hero .cta,.rotulo,.nums,section h2,.eyebrow,.duas,.faixa p,.linha,.extra .grade,.final p,.final .cta){visibility:hidden}
+/* ---------- CELULAR: só o que é barato (transform/opacity); nada de desfoque animado nem repintura por quadro ---------- */
+@media (max-width:860px),(hover:none) and (pointer:coarse){
+  .creme::before,.creme::after,.projetos::before,.projetos::after,.bloco::after,.particulas{display:none}
+  .hero::before,.hero::after,.passos::before,.final::before,.palco,.ip,.aviso{animation:none}
+  .pilula,.logo,.ip__notif,.carousel-stage,.topo .btn{backdrop-filter:none;-webkit-backdrop-filter:none}
+  .ip__notif{background:#f5f5f7}
+  .carousel-stage{background:#1d1b26}
+  .ip,.aviso{will-change:auto}
+  .pasta .proj{box-shadow:0 18px 30px -22px rgba(40,20,90,.35)}
+}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important}
   [data-a],.palavra,.creme,.projetos{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
@@ -480,6 +490,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 // se o GSAP não carregar (sem internet/CDN bloqueado), nada fica escondido
 setTimeout(()=>{if(!window.ScrollTrigger)document.documentElement.classList.remove('ac')},2500);
 const reduzido=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const CELULAR=matchMedia('(max-width: 860px), (hover: none) and (pointer: coarse)').matches;
 // palavra que troca no topo
 const nichos=['barbearias','marmitarias','clínicas','pet shops','salões','pizzarias'];let i=0;const t=document.getElementById('troca');
 if(!reduzido)setInterval(()=>{i=(i+1)%nichos.length;t.animate([{opacity:1,filter:'blur(0)'},{opacity:0,filter:'blur(4px)'}],{duration:180}).onfinish=()=>{t.textContent=nichos[i];t.animate([{opacity:0,filter:'blur(4px)'},{opacity:1,filter:'blur(0)'}],{duration:240,easing:'ease-out'})}},2200);
@@ -487,7 +498,9 @@ if(!reduzido)setInterval(()=>{i=(i+1)%nichos.length;t.animate([{opacity:1,filter
 const sinal='<svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>';
 const wifi='<svg viewBox="0 0 16 12"><path d="M8 2.5c2.3 0 4.4.9 6 2.4l1.2-1.3A10.3 10.3 0 0 0 8 .7 10.3 10.3 0 0 0 .8 3.6L2 4.9a8.6 8.6 0 0 1 6-2.4zm0 3.6c1.3 0 2.5.5 3.4 1.3l1.2-1.3A6.6 6.6 0 0 0 8 4.3a6.6 6.6 0 0 0-4.6 1.8l1.2 1.3c.9-.8 2.1-1.3 3.4-1.3zM8 9.7 9.9 7.8a2.8 2.8 0 0 0-3.8 0z"/></svg>';
 const bat='<svg viewBox="0 0 27 12"><rect x=".5" y=".5" width="23" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="19" height="8" rx="1.8"/><rect x="25" y="4" width="1.5" height="4" rx=".7" opacity=".4"/></svg>';
-const carregar=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const f=e.target.querySelector('iframe');if(f&&!f.src)f.src=f.dataset.src;carregar.unobserve(e.target)}),{rootMargin:'400px 0px'});
+// na pasta, só o site da folha da frente carrega (os outros carregam quando a folha vem para a frente)
+const carregarIframe=el=>{const f=el.querySelector('iframe');if(f&&!f.src)f.src=f.dataset.src};
+const carregar=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const folha=e.target.closest('.pasta .proj');if(folha&&!folha.classList.contains('frente'))return;carregarIframe(e.target);carregar.unobserve(e.target)}),{rootMargin:'400px 0px'});
 document.querySelectorAll('.ip').forEach(el=>{
   el.innerHTML=`<span class="ip__botao ip__acao"></span><span class="ip__botao ip__vol1"></span><span class="ip__botao ip__vol2"></span><span class="ip__botao ip__forca"></span>
   <div class="ip__tela"><span class="ip__ilha"></span><div class="ip__vp">
@@ -577,7 +590,7 @@ partes.forEach(el=>io.observe(el));
     }
     const a=Math.round(p);
     if(a!==ativa){ativa=a;abas.forEach((b,i)=>{b.classList.toggle('ativa',i===a);b.setAttribute('aria-selected',i===a)});
-      folhas.forEach((f,i)=>{f.inert=i!==a;f.classList.toggle('frente',i===a)});
+      folhas.forEach((f,i)=>{f.inert=i!==a;f.classList.toggle('frente',i===a);if(i===a&&pasta.getBoundingClientRect().top<innerHeight+400){const ip=f.querySelector('.ip');if(ip)carregarIframe(ip)}});
       if(dica)dica.style.opacity=a>=n-1?0:1}
   };
   const pedir=()=>{if(!pedido)pedido=requestAnimationFrame(atualizar)};
@@ -598,9 +611,10 @@ const WIPES={
   right:'linear-gradient(to right, #000 calc(var(--ac-wipe) * 140% - 40%), transparent calc(var(--ac-wipe) * 140%))',
   center:'radial-gradient(farthest-corner at 50% 50%, #000 calc(var(--ac-wipe) * 140% - 40%), transparent calc(var(--ac-wipe) * 140%))'};
 function animatedContent(el,o={}){
-  const {distance=100,direction='vertical',reverse=false,duration=.8,ease='power3.out',initialOpacity=0,animateOpacity=true,
+  let {distance=100,direction='vertical',reverse=false,duration=.8,ease='power3.out',initialOpacity=0,animateOpacity=true,
     scale=1,blur=0,rotate=0,tilt=0,wipe='none',threshold=.1,delay=0,stagger=0,staggerFrom='start',trigger='scroll',once=true,alvos}=o;
   if(!el)return;
+  if(CELULAR){blur=0;tilt=0;wipe='none'}   // no celular: só movimento e opacidade (desfoque por palavra pesa muito)
   const targets=alvos?[...el.querySelectorAll(alvos)]:(stagger>0&&el.children.length?[...el.children]:[el]);
   const horizontal=direction==='horizontal',axis=horizontal?'x':'y',sign=reverse?-1:1,mask=WIPES[wipe];
   gsap.set(el,{visibility:'visible'});
