@@ -2,12 +2,15 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0c14">
 <title>Marcos | Sites, jogos e vídeos</title>
 <meta name="description" content="Sites para negócios, vídeos para redes sociais e jogos para navegador. Prévia grátis antes de fechar.">
 <meta property="og:title" content="Marcos | Sites, jogos e vídeos">
 <meta property="og:description" content="Sites que trazem cliente pelo WhatsApp, cortes e animações para redes e um jogo com milhares de views. Prévia grátis.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="modulepreload" href="js/galaxy.js">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0d0c14;--bg2:#14121f;--card:#1a1728;--line:#2b2740;--txt:#f1eff8;--mut:#a7a2bd;--roxo:#a78bfa;--roxo2:#7c5cff;--ama:#ffd23f}
@@ -49,8 +52,9 @@ h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.9rem,4vw,2.7rem);mar
 .card li{color:var(--mut);font-size:.92rem;padding-left:20px;position:relative;margin:4px 0}
 .card li:before{content:"✓";position:absolute;left:0;color:var(--roxo)}
 .site{padding:0;overflow:hidden}
-.tela{height:230px;overflow:hidden;position:relative;background:#fff;border-bottom:1px solid var(--line)}
-.tela iframe{width:1280px;height:920px;border:0;transform:scale(.25);transform-origin:0 0;pointer-events:none}
+/* capturas leves (WebP 640/1280) no lugar dos sites ao vivo em iframe, que carregavam 3 sites inteiros */
+.tela{aspect-ratio:16/10;overflow:hidden;position:relative;background:#14121f;border-bottom:1px solid var(--line)}
+.tela img,.jogo-tela img{display:block;width:100%;height:100%;object-fit:cover;object-position:top center}
 .site .info{padding:18px 20px}
 .site .info .ver{color:var(--roxo);font-weight:600;font-size:.9rem}
 .jogo{background:linear-gradient(135deg,#1c1535,#0d0c14)}
@@ -59,8 +63,8 @@ h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.9rem,4vw,2.7rem);mar
 .stat{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:16px}
 .stat b{display:block;font-family:'Space Grotesk',sans-serif;font-size:1.6rem;color:var(--ama)}
 .stat span{color:var(--mut);font-size:.85rem}
-.jogo-tela{border-radius:18px;overflow:hidden;border:1px solid var(--line);aspect-ratio:16/10;background:#000}
-.jogo-tela iframe{width:100%;height:100%;border:0}
+.jogo-tela{display:block;position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);aspect-ratio:16/10;background:#000}
+.jogo-tela .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(13,12,20,.78);border:1px solid rgba(255,255,255,.18);color:#fff;font-weight:700;padding:12px 20px;border-radius:999px;font-size:.95rem}
 .passos{counter-reset:p;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
 .passo{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;counter-increment:p}
 .passo:before{content:counter(p);display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--roxo2);font-weight:700;margin-bottom:12px}
@@ -82,8 +86,8 @@ section,footer{position:relative;z-index:1}
 header{z-index:10}
 .jogo{background:linear-gradient(135deg,rgba(28,21,53,.75),rgba(13,12,20,.35))}
 .card,.passo{background:rgba(26,23,40,.88)}
-.rail{position:fixed;top:0;bottom:0;width:max(0px,calc((100vw - 1180px)/2));opacity:.18;pointer-events:none;z-index:0;overflow:hidden}
-#rail-left{left:0}#rail-right{right:0}
+/* celular: sem desfoque atrás do cabeçalho fixo (custa caro ao rolar) */
+@media(max-width:860px){header{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(13,12,20,.97)}}
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
 .reveal.visible{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
@@ -93,9 +97,13 @@ header{z-index:10}
 .zap-flutuante{position:fixed;right:18px;bottom:18px;z-index:20;display:flex;align-items:center;gap:8px;background:#25d366;color:#06301a;font-weight:700;padding:13px 18px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
 .zap-flutuante svg{width:22px;height:22px;fill:#06301a}
 @media(max-width:520px){.zap-flutuante span{display:none}.zap-flutuante{padding:15px}}
+.zap-flutuante{bottom:calc(18px + env(safe-area-inset-bottom,0px));transition:opacity .2s ease,transform .25s cubic-bezier(.23,1,.32,1)}
+.zap-flutuante.oculto{opacity:0;transform:translateY(12px);pointer-events:none}
+/* celular: botões do topo na largura toda (o texto do WhatsApp não cabia ao lado do outro) */
+@media(max-width:520px){.hero .cta .btn{width:100%;justify-content:center}}
 </style>
 </head>
-<body><div id="dot-field" aria-hidden="true"></div><div class="rail" id="rail-left" aria-hidden="true"></div><div class="rail" id="rail-right" aria-hidden="true"></div>
+<body><div id="dot-field" aria-hidden="true"></div>
 <header>
   <div class="wrap nav">
     <a class="logo" href="#">Marcos<span>.</span></a>
@@ -140,9 +148,9 @@ header{z-index:10}
     <h2>Sites</h2>
     <p class="sub">Alguns sites que fiz. Toque para ver ao vivo.</p>
     <div class="grid">
-      <a class="card site" href="barbearia-navalha/" target="_blank" rel="noopener"><div class="tela" style="background:#0f0e13"><iframe loading="lazy" title="Barbearia Navalha (demonstração)" src="barbearia-navalha/" tabindex="-1"></iframe></div><div class="info"><h3>Barbearia (demonstração)</h3><span class="ver">Ver site ↗</span></div></a>
-      <a class="card site" href="https://studiomartins.vercel.app" target="_blank" rel="noopener"><div class="tela"><iframe loading="lazy" title="Studio Martins" src="https://studiomartins.vercel.app" tabindex="-1"></iframe></div><div class="info"><h3>Studio de pilates</h3><span class="ver">Ver site ↗</span></div></a>
-      <a class="card site" href="https://amordepata.vercel.app" target="_blank" rel="noopener"><div class="tela"><iframe loading="lazy" title="Amor de Pata" src="https://amordepata.vercel.app" tabindex="-1"></iframe></div><div class="info"><h3>Pet shop</h3><span class="ver">Ver site ↗</span></div></a>
+      <a class="card site" href="barbearia-navalha/" target="_blank" rel="noopener"><div class="tela"><img src="img/navalha-640.webp" srcset="img/navalha-640.webp 640w, img/navalha-1280.webp 1280w" sizes="(max-width: 700px) 92vw, 360px" width="1280" height="800" alt="Página inicial do site da barbearia Navalha" loading="lazy" decoding="async"></div><div class="info"><h3>Barbearia (demonstração)</h3><span class="ver">Ver site ↗</span></div></a>
+      <a class="card site" href="https://studiomartins.vercel.app" target="_blank" rel="noopener"><div class="tela"><img src="img/studio-martins-640.webp" srcset="img/studio-martins-640.webp 640w, img/studio-martins-1280.webp 1280w" sizes="(max-width: 700px) 92vw, 360px" width="1280" height="800" alt="Página inicial do site do Studio Martins" loading="lazy" decoding="async"></div><div class="info"><h3>Studio de pilates</h3><span class="ver">Ver site ↗</span></div></a>
+      <a class="card site" href="https://amordepata.vercel.app" target="_blank" rel="noopener"><div class="tela"><img src="img/amor-de-pata-640.webp" srcset="img/amor-de-pata-640.webp 640w, img/amor-de-pata-1280.webp 1280w" sizes="(max-width: 700px) 92vw, 360px" width="1280" height="800" alt="Página inicial do site do pet shop Amor de Pata" loading="lazy" decoding="async"></div><div class="info"><h3>Pet shop</h3><span class="ver">Ver site ↗</span></div></a>
     </div>
   </div>
 </section>
@@ -161,7 +169,7 @@ header{z-index:10}
       </div>
       <a class="btn btn-p" href="https://lila-no-limite-interlagos.vercel.app" target="_blank" rel="noopener">🎮 Jogar grátis</a>
     </div>
-    <div class="jogo-tela"><iframe loading="lazy" title="Lila no Limite" src="https://lila-no-limite-interlagos.vercel.app"></iframe></div>
+    <a class="jogo-tela" href="https://lila-no-limite-interlagos.vercel.app" target="_blank" rel="noopener"><img src="img/lila-640.webp" srcset="img/lila-640.webp 640w, img/lila-1280.webp 1280w" sizes="(max-width: 860px) 92vw, 520px" width="1280" height="800" alt="Menu do jogo Lila no Limite com o carro na pista de Interlagos" loading="lazy" decoding="async"><span class="play">▶ Jogar grátis</span></a>
   </div>
 </section>
 
@@ -210,18 +218,21 @@ const fino = matchMedia('(hover: hover) and (pointer: fine)').matches;
 // aparecer ao rolar (do portfólio antigo)
 const obs = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } }), { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('section h2, .sub, .card, .passo, .stat, .jogo-tela').forEach((el) => { el.classList.add('reveal'); obs.observe(el); });
-// campo de pontos no contato (do portfólio antigo, nas cores da marca)
-import('./js/dot-field.js').then(({ initDotField }) => {
-  const f = initDotField(document.getElementById('dot-field'), { gradientFrom: 'rgba(167,139,250,0.35)', gradientTo: 'rgba(255,210,63,0.18)', glowColor: 'rgba(167,139,250,0.12)' });
-  if (!reduzido && fino) f.start?.();
-}).catch(() => {});
-// trilhos de letras com glitch nas laterais (só em telas largas)
-import('./js/letter-glitch.js').then(({ initLetterGlitch }) => {
-  const els = [document.getElementById('rail-left'), document.getElementById('rail-right')];
-  if (els[0].getBoundingClientRect().width < 8) return;
-  const rails = els.map((el) => initLetterGlitch(el, { glitchColors: ['#7c5cff', '#a78bfa', '#ffd23f'], glitchSpeed: 50, smooth: true })).filter(Boolean);
-  rails.forEach((r) => (reduzido ? r.showStatic?.() : r.start?.()));
-}).catch(() => {});
+// campo de pontos (do portfólio antigo, nas cores da marca): só carrega com mouse e sem "reduzir movimento".
+// No celular ele nunca animava, mas o arquivo era baixado e executado do mesmo jeito.
+if (!reduzido && fino) {
+  import('./js/dot-field.js').then(({ initDotField }) => {
+    const f = initDotField(document.getElementById('dot-field'), { gradientFrom: 'rgba(167,139,250,0.35)', gradientTo: 'rgba(255,210,63,0.18)', glowColor: 'rgba(167,139,250,0.12)' });
+    f.start?.();
+  }).catch(() => {});
+}
+// (as letras com glitch nas laterais foram retiradas em 26/11/2026)
+// botão flutuante do WhatsApp: só aparece depois que os botões do topo saem da tela (antes cobria o botão principal no celular)
+const flutuante = document.querySelector('.zap-flutuante'), ctaTopo = document.querySelector('.hero .cta');
+if (flutuante && ctaTopo && 'IntersectionObserver' in window) {
+  flutuante.classList.add('oculto');
+  new IntersectionObserver(([e]) => flutuante.classList.toggle('oculto', e.isIntersecting)).observe(ctaTopo);
+}
 </script>
 </body>
 </html>
